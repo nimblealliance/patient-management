@@ -1,0 +1,12 @@
+POST http://localhost:4004/api/patients
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "joemamaMan",
+  "email": "joemamaMan@gmail.com",
+  "address": "Whitefield",
+  "dateOfBirth": "1994-03-19",
+  "registeredDate": "2025-10-11"
+
+}

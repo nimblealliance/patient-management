@@ -1,0 +1,67 @@
+
+
+
+
+server:
+  port: 4004 # Gateway listens on port 4004
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
+  cloud:
+    gateway:
+
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter.burstCapacity: 5 # number of tokens available in the bucket , the max that can be stored in the bucket
+            redis-rate-limiter.replenishRate: 5 #how the tokens are replenished or put back in the bucket , so here it is 5 tokens per sec or 1 token per 200 ms
+            key-resolver: "#{@ipKeyResolver}" # this decides how rate limiting applies (eg , per user , IP , API key , etc. here we pass the name of the bean we created in RateLimiterConfig class
+
+      routes:
+
+          # REST-client ->  http://localhost:4004/api/login
+          # API gateway ->  http://localhost:4005/login
+
+        - id: auth-service-route
+          uri: http://auth-service:4005
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+
+          # REST-client -> http://localhost:4004/api/patients
+          # API Gateway -> http://patient-service:4000/patients
+        - id: patient-service-route
+          uri: http://patient-service:4000
+          predicates:
+            - Path=/api/patients/**
+          filters:
+            - StripPrefix=1
+            - JwtValidation
+
+
+        # REST-client -> http://localhost:4004/api-docs/patients
+        # API-gateway -> http://patient-service:4000/v3/api-docs
+
+        - id: api-docs-patient-route
+          uri: http://patient-service:4000
+          predicates:
+            - Path=/api-docs/patients
+          filters:
+            - RewritePath=/api-docs/patients,/v3/api-docs
+
+        - id: api-docs-auth-route
+          uri: http://auth-service:4005
+          predicates:
+            - Path=/api-docs/auth
+          filters:
+            - RewritePath=/api-docs/auth,/v3/api-docs
+
+
+
+

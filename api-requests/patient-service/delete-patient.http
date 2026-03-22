@@ -1,0 +1,5 @@
+### DELETE request to example server
+DELETE  http://localhost:4004/api/patients/427d5139-8749-4fa8-9fe7-38198a3093d5
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlckB0ZXN0LmNvbSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2MjU3MTUyNCwiZXhwIjoxNzYyNjA3NTI0fQ.g4-Erqqk1h5qvrhfTXBHl8QDQE6-F9EcwF9MpFBYG0Gd826K3PMw1H8ych4e8guZ
+
+###
