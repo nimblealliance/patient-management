@@ -1,0 +1,185 @@
+version: "3.9"
+
+services:
+
+  # -------------------- INFRA --------------------
+
+  kafka:
+    image: apache/kafka:latest
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9094
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 0@kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      KAFKA_NODE_ID: 0
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_PROCESS_ROLES: controller,broker
+    networks:
+      - internal
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - internal
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - internal
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - internal
+
+  # -------------------- DATABASES --------------------
+
+  auth-service-db:
+    image: postgres:latest
+    ports:
+      - "5001:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - auth_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  patient-service-db:
+    image: postgres:latest
+    ports:
+      - "5000:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - patient_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  appointment-service-db:
+    image: postgres:latest
+    ports:
+      - "5002:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: admin_user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - appointment_data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  # -------------------- SERVICES --------------------
+
+  auth-service:
+    build: ./auth-service
+    image: auth-service:latest
+    depends_on:
+      - auth-service-db
+      - kafka
+    environment:
+      JWT_SECRET: 6ef77c0ebdb32a76fa05b8d2e44362667702f98d556f5ce26bcbc68def7a6f62
+      SPRING_DATASOURCE_URL: jdbc:postgresql://auth-service-db:5432/db
+      SPRING_DATASOURCE_USERNAME: admin_user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+    networks:
+      - internal
+
+  patient-service:
+    build: ./patient-service
+    image: patient-service:latest
+    ports:
+      - "4000:4000"
+    depends_on:
+      - patient-service-db
+      - redis
+      - kafka
+    environment:
+      BILLING_SERVICE_ADDRESS: billing-service
+      BILLING_SERVICE_GRPC_PORT: 9001
+      SPRING_CACHE_TYPE: redis
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_DATASOURCE_URL: jdbc:postgresql://patient-service-db:5432/db
+      SPRING_DATASOURCE_USERNAME: admin_user
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_DDL_AUTO: update
+      SPRING_SQL_INIT_MODE: always
+    networks:
+      - internal
+
+  appointment-service:
+    build: ./appointment-service
+    image: appointment-service:latest
+    ports:
+      - "4006:4006"
+    depends_on:
+      - appointment-service-db
+    networks:
+      - internal
+
+  analytics-service:
+    build: ./analytics-service
+    image: analytics-service:latest
+    ports:
+      - "4002:4002"
+    depends_on:
+      - kafka
+    networks:
+      - internal
+
+  billing-service:
+    build: ./billing-service
+    image: billing-service:latest
+    ports:
+      - "4001:4001"
+      - "9001:9001"
+    depends_on:
+      - kafka
+    networks:
+      - internal
+
+  api-gateway:
+    build: ./api-gateway
+    image: api-gateway:latest
+    ports:
+      - "4004:4004"
+    depends_on:
+      - auth-service
+      - patient-service
+      - appointment-service
+    environment:
+      AUTH_SERVICE_URL: http://auth-service:4005
+    networks:
+      - internal
+
+# -------------------- VOLUMES --------------------
+
+volumes:
+  auth_data:
+  patient_data:
+  appointment_data:
+
+# -------------------- NETWORK --------------------
+
+networks:
+  internal:
+    driver: bridge
