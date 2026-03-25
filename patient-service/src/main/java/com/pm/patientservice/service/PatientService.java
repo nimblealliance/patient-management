@@ -46,14 +46,6 @@ public class PatientService {
             key = "#page + '-' + #size + '-' + #sort + '-' + #sortField"
     )
     public PagedPatientResponseDTO getPatients(int page , int size , String sort , String sortField , String searchValue){
-
-        
-        try { //just to simulate slow DB reads when cache miss happens
-            Thread.sleep(2000);
-        }catch (InterruptedException e){
-            log.info(e.getMessage());
-
-        }
         //has all the info about pages and stuff being requested.
         Pageable pageable = PageRequest.of(page -1, //Spring's Pageable system is zero based indexing hence the -1,
                 size,
