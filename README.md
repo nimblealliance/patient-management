@@ -1,15 +1,15 @@
-# 🏥 Microservices-Based Patient Management System
+# Microservices-Based Patient Management System
 
 A scalable **Patient Management System** built using a **microservices architecture** with Spring Boot.
 The system demonstrates synchronous and asynchronous communication patterns, containerization, and observability.
 
 ---
 
-## 🚀 Architecture Overview
+## Architecture Overview
 
 ![Architecture Diagram](./architecture.png)
 
-### 🔹 Key Highlights
+## Key Highlights
 
 * API Gateway as a single entry point for client requests
 * Authentication handled via Auth Service
@@ -23,7 +23,7 @@ The system demonstrates synchronous and asynchronous communication patterns, con
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 * **Backend:** Java, Spring Boot
 * **Communication:** REST, gRPC
@@ -35,7 +35,7 @@ The system demonstrates synchronous and asynchronous communication patterns, con
 
 ---
 
-## 🔄 System Flow
+## System Flow
 
 1. Client sends request to API Gateway
 2. API Gateway routes request to Auth Service for authentication
@@ -52,7 +52,7 @@ The system demonstrates synchronous and asynchronous communication patterns, con
 
 ---
 
-## 📦 Services
+## Services
 
 * **API Gateway**
 * **Auth Service**
@@ -68,16 +68,16 @@ The system demonstrates synchronous and asynchronous communication patterns, con
 
 ---
 
-## 🛠️ Setup & Run
+## Setup & Run
 
-### 🔹 Prerequisites
+### Prerequisites
 
 * Docker installed
 * Docker Compose installed
 
 ---
 
-### ▶️ Run the application
+### Run the application
 
 ```bash
 docker-compose up --build
@@ -92,7 +92,7 @@ This will:
 
 ---
 
-### ▶️ Run in background
+### Run in background
 
 ```bash
 docker-compose up --build -d
@@ -100,7 +100,7 @@ docker-compose up --build -d
 
 ---
 
-### 🛑 Stop the application
+### Stop the application
 
 ```bash
 docker-compose down
@@ -108,7 +108,7 @@ docker-compose down
 
 ---
 
-## 🌐 Access Points
+## Access Points
 
 | Service         | URL                   |
 | --------------- | --------------------- |
@@ -119,19 +119,19 @@ docker-compose down
 
 ---
 
-## 🛡️ Resilience & Fault Tolerance
+## Resilience & Fault Tolerance
 * Implemented rate limiting at the API Gateway to control traffic and prevent system overload
 * Integrated circuit breaker pattern to handle downstream service failures gracefully
 * Ensured system stability by preventing cascading failures across microservices
 
-## 📊 Observability
+## Observability
 
 * **Prometheus** collects metrics from services
 * **Grafana** provides dashboards for visualization
 
 ---
 
-## 🧠 Key Concepts Demonstrated
+## Key Concepts Demonstrated
 
 * Microservices architecture
 * API Gateway pattern
@@ -144,14 +144,14 @@ docker-compose down
 
 ---
 
-## 🚀 Future Improvements
+## Future Improvements
 
 * Add health checks and retry mechanisms
 * Distributed tracing (Zipkin/Jaeger)
 
 ---
 
-## 👤 Author
+## Author
 
 Rahul Menon
 
