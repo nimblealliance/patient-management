@@ -52,8 +52,8 @@ services:
       - "5001:5432"
     environment:
       POSTGRES_DB: db
-      POSTGRES_USER: admin_user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
     volumes:
       - auth_data:/var/lib/postgresql/data
     networks:
@@ -65,8 +65,8 @@ services:
       - "5000:5432"
     environment:
       POSTGRES_DB: db
-      POSTGRES_USER: admin_user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
     volumes:
       - patient_data:/var/lib/postgresql/data
     networks:
@@ -78,8 +78,8 @@ services:
       - "5002:5432"
     environment:
       POSTGRES_DB: db
-      POSTGRES_USER: admin_user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
     volumes:
       - appointment_data:/var/lib/postgresql/data
     networks:
@@ -94,10 +94,10 @@ services:
       - auth-service-db
       - kafka
     environment:
-      JWT_SECRET: 6ef77c0ebdb32a76fa05b8d2e44362667702f98d556f5ce26bcbc68def7a6f62
+      JWT_SECRET: 
       SPRING_DATASOURCE_URL: jdbc:postgresql://auth-service-db:5432/db
-      SPRING_DATASOURCE_USERNAME: admin_user
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_USERNAME: 
+      SPRING_DATASOURCE_PASSWORD: 
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_SQL_INIT_MODE: always
     networks:
@@ -119,8 +119,8 @@ services:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
       SPRING_DATASOURCE_URL: jdbc:postgresql://patient-service-db:5432/db
-      SPRING_DATASOURCE_USERNAME: admin_user
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_USERNAME: 
+      SPRING_DATASOURCE_PASSWORD: 
       SPRING_DATASOURCE_DDL_AUTO: update
       SPRING_SQL_INIT_MODE: always
     networks:
